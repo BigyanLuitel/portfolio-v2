@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     cors_origins: str = "http://localhost:3000"
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    telegram_bot_token: str = ""
+    telegram_chat_id: str = ""
 
     @property
     def cors_origins_list(self) -> list[str]:
