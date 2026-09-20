@@ -1,5 +1,6 @@
 from app.models.project_data import PROJECTS
-
+import requests
+from app.core.config import settings
 
 def get_project_details(slug: str) -> str:
     for project in PROJECTS:
@@ -31,9 +32,40 @@ GET_PROJECT_DETAILS_SCHEMA = {
         }
     }
 }
+def notify_bigyan(message: str) -> str:
+    url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
+    try:
+        response = requests.post(
+            url,
+            json={"chat_id": settings.telegram_chat_id, "text": message},
+            timeout=5,
+        )
+        response.raise_for_status()
+        return "Message sent to Bigyan successfully."
+    except requests.RequestException as e:
+        return f"Failed to send notification: {e}"
+    
+NOTIFY_BIGYAN_SCHEMA = {
+    "type": "function",
+    "function": {
+        "name": "notify_bigyan",
+        "description": "Send a notification to Bigyan when a visitor asks something the assistant can't answer, or leaves contact info wanting to connect. Use this sparingly — only when genuinely useful to Bigyan, not for every message.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "A concise summary of what the visitor asked or wants, including their contact info if given.",
+                }
+            },
+            "required": ["message"],
+        },
+    },
+}
 
-TOOL_SCHEMAS = [GET_PROJECT_DETAILS_SCHEMA]
+TOOL_SCHEMAS = [GET_PROJECT_DETAILS_SCHEMA, NOTIFY_BIGYAN_SCHEMA]
 
 TOOL_REGISTRY = {
-    "get_project_details": get_project_details
+    "get_project_details": get_project_details,
+    "notify_bigyan": notify_bigyan
 }
