@@ -32,19 +32,46 @@ GET_PROJECT_DETAILS_SCHEMA = {
         }
     }
 }
-def notify_bigyan(message: str) -> str:
+def _send_telegram_message(text: str) -> str:
     url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
     try:
         response = requests.post(
             url,
-            json={"chat_id": settings.telegram_chat_id, "text": message},
+            json={"chat_id": settings.telegram_chat_id, "text": text},
             timeout=5,
         )
         response.raise_for_status()
-        return "Message sent to Bigyan successfully."
+        return "Sent."
     except requests.RequestException as e:
-        return f"Failed to send notification: {e}"
+        return f"Failed to send: {e}"
     
+def notify_bigyan(message: str) -> str:
+    result = _send_telegram_message(f"[Lead] {message}")
+    if result == "Sent.":
+        return "Message sent to Bigyan successfully."
+    return result
+def escalate_to_human(reason: str) -> str:
+    result = _send_telegram_message(f"[Escalation] {reason}")
+    if result == "Sent.":
+        return "This has been flagged for Bigyan to follow up on personally."
+    return "I couldn't reach Bigyan right now, but please try contacting him directly via the contact form."
+ESCALATE_TO_HUMAN_SCHEMA = {
+    "type": "function",
+    "function": {
+        "name": "escalate_to_human",
+        "description": "Use this when you genuinely cannot answer the visitor's question — it's out of scope, ambiguous, or not covered by any available project/experience data. Do NOT use this for questions you can actually answer, and do not use it just because a visitor wants to be contacted (use notify_bigyan for that instead).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "description": "A brief explanation of what the visitor asked and why it couldn't be answered.",
+                }
+            },
+            "required": ["reason"],
+        },
+    },
+}
 NOTIFY_BIGYAN_SCHEMA = {
     "type": "function",
     "function": {
@@ -63,9 +90,10 @@ NOTIFY_BIGYAN_SCHEMA = {
     },
 }
 
-TOOL_SCHEMAS = [GET_PROJECT_DETAILS_SCHEMA, NOTIFY_BIGYAN_SCHEMA]
+TOOL_SCHEMAS = [GET_PROJECT_DETAILS_SCHEMA, NOTIFY_BIGYAN_SCHEMA, ESCALATE_TO_HUMAN_SCHEMA]
 
 TOOL_REGISTRY = {
     "get_project_details": get_project_details,
-    "notify_bigyan": notify_bigyan
+    "notify_bigyan": notify_bigyan,
+    "escalate_to_human": escalate_to_human
 }
