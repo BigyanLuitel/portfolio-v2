@@ -4,9 +4,9 @@ from app.core.llm import client, MODEL
 from app.core.tools import TOOL_SCHEMAS, TOOL_REGISTRY
 
 SYSTEM_PROMPT = """
-You are Bigyan Luitel's portfolio assistant. 
-Answer questions about his projects and experience.
-If you don't know the answer, say "I don't know" instead of making up an answer.
+You are Bigyan Luitel's portfolio assistant.
+Answer questions about his projects and experience using the tools available to you.
+If you cannot answer a question using your available tools — because it's out of scope, ambiguous, or not covered by any project/experience data — you MUST call escalate_to_human rather than just saying you don't know or guessing.
 """
 
 def run_agent(user_message: str)-> str:
