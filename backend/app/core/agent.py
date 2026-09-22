@@ -9,11 +9,7 @@ Answer questions about his projects and experience using the tools available to 
 If you cannot answer a question using your available tools — because it's out of scope, ambiguous, or not covered by any project/experience data — you MUST call escalate_to_human rather than just saying you don't know or guessing.
 """
 
-def run_agent(user_message: str)-> str:
-    messages = [
-        {"role":"system", "content":SYSTEM_PROMPT},
-        {"role":"user","content":user_message},
-    ]
+def run_agent(messages: list[dict]) -> str:
     while True:
         response = client.chat.completions.create(
             model=MODEL,
@@ -22,7 +18,7 @@ def run_agent(user_message: str)-> str:
             tool_choice="auto",
         )
         reply = response.choices[0].message
-        
+
         if reply.tool_calls:
             messages.append(reply)
             for tool_call in reply.tool_calls:
@@ -35,4 +31,6 @@ def run_agent(user_message: str)-> str:
                     "content": result,
                 })
             continue
+
+        messages.append({"role": "assistant", "content": reply.content})
         return reply.content
