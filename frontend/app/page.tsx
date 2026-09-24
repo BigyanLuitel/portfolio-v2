@@ -1,8 +1,10 @@
 import About from "./components/About";
 import Education from "./components/Education";
+import Skills from "./components/Skills";
 import Hero from "./components/Hero";
 import Nav from "./components/Nav";
 import Projects from "./components/Projects";
+
 import { getProjects } from "./lib/api";
 
 export default async function Home() {
@@ -14,6 +16,7 @@ export default async function Home() {
       <Hero />
       <About />
       <Education />
+      <Skills />
       <Projects projects={projects} />
     </>
   );
