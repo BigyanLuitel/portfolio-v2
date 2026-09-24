@@ -1,14 +1,16 @@
 import Hero from "./components/Hero";
 import Nav from "./components/Nav";
+import Projects from "./components/Projects";
+import { getProjects } from "./lib/api";
 
-export default function Home() {
+export default async function Home() {
+  const projects = await getProjects();
+
   return (
     <>
       <Nav />
       <Hero />
-      <div className="h-screen flex items-center justify-center">
-        <p className="text-muted">Projects section coming soon</p>
-      </div>
+      <Projects projects={projects} />
     </>
   );
 }
