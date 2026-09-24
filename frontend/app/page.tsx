@@ -4,6 +4,7 @@ import Skills from "./components/Skills";
 import Hero from "./components/Hero";
 import Nav from "./components/Nav";
 import Services from "./components/Services";
+import Contact from "./components/Contact";
 import Projects from "./components/Projects";
 
 import { getProjects } from "./lib/api";
@@ -20,6 +21,7 @@ export default async function Home() {
       <Skills />
       <Services />
       <Projects projects={projects} />
+      <Contact />
     </>
   );
 }
