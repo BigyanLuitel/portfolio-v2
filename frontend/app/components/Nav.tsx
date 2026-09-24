@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
-import link from "next/dist/client/link";
+import { useLenis } from "./SmoothScroll";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -15,9 +16,22 @@ export default function Nav() {
   }, []);
 
   const links = [
+    { href: "#about", label: "About" },
+    { href: "#education", label: "Education" },
+    { href: "#skills", label: "Skills" },
+    { href: "#services", label: "Services" },
     { href: "#projects", label: "Projects" },
     { href: "#contact", label: "Contact" },
   ];
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    e.preventDefault();
+    lenis?.scrollTo(href);
+    setMenuOpen(false);
+  };
 
   return (
     <header
@@ -37,6 +51,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="hover:text-accent transition-colors"
             >
               {link.label}
@@ -73,7 +88,7 @@ export default function Nav() {
 
       <div
         className={`md:hidden overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-          menuOpen ? "max-h-40" : "max-h-0"
+          menuOpen ? "max-h-64" : "max-h-0"
         } bg-background/95 backdrop-blur-md border-b border-border`}
       >
         <div className="flex flex-col px-6 py-4 gap-4 font-body text-sm">
@@ -81,7 +96,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              onClick={() => setMenuOpen(false)}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="hover:text-accent transition-colors"
             >
               {link.label}
