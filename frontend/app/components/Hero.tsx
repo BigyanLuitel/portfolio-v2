@@ -30,7 +30,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={typingDone ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="font-body text-base md:text-lg opacity-70 mt-5 max-w-md"
+        className="font-body text-base md:text-lg text-muted mt-5 max-w-md"
       >
         Building backend systems and agentic AI, based in Kathmandu, Nepal.
       </motion.p>
