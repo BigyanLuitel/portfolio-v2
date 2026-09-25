@@ -1,8 +1,7 @@
+from fastapi import APIRouter, Request
 import uuid
-
-from fastapi import APIRouter
-
 from app.core.agent import run_agent, SYSTEM_PROMPT
+from app.core.limiter import limiter
 from app.models.chat_sessions import SESSIONS
 from app.schemas.chat import ChatRequest, ChatResponse
 
@@ -10,7 +9,8 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 
 
 @router.post("/", response_model=ChatResponse)
-def chat(payload: ChatRequest):
+@limiter.limit("10/minute")
+def chat(request: Request, payload: ChatRequest):
     session_id = payload.session_id or str(uuid.uuid4())
 
     if session_id not in SESSIONS:
