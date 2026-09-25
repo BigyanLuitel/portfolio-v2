@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FiMessageCircle, FiX, FiSend } from "react-icons/fi";
+import ReactMarkdown from "react-markdown";
 import { sendChatMessage } from "../lib/api";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  timestamp: number;
 }
 
 export default function ChatWidget() {
@@ -30,7 +32,10 @@ export default function ChatWidget() {
     const trimmed = input.trim();
     if (!trimmed || isThinking) return;
 
-    setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: trimmed, timestamp: Date.now() },
+    ]);
     setInput("");
     setIsThinking(true);
 
@@ -40,7 +45,7 @@ export default function ChatWidget() {
       localStorage.setItem("chat_session_id", data.session_id);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: data.reply },
+        { role: "assistant", content: data.reply, timestamp: Date.now() },
       ]);
     } catch {
       setMessages((prev) => [
@@ -48,12 +53,16 @@ export default function ChatWidget() {
         {
           role: "assistant",
           content: "Sorry, something went wrong. Please try again.",
+          timestamp: Date.now(),
         },
       ]);
     } finally {
       setIsThinking(false);
     }
   };
+
+  const formatTime = (ts: number) =>
+    new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
     <>
@@ -76,18 +85,21 @@ export default function ChatWidget() {
             transition={{ duration: 0.2 }}
             className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 h-[28rem] bg-background border border-border rounded-2xl shadow-xl flex flex-col overflow-hidden"
           >
-            <div className="px-4 py-3 border-b border-border">
-              <p className="font-heading font-medium text-sm">
-                Ask about Bigyan
-              </p>
-              <p className="font-body text-xs text-muted">
-                AI assistant, may make mistakes
-              </p>
+            <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <div>
+                <p className="font-heading font-medium text-sm">
+                  Ask about Bigyan
+                </p>
+                <p className="font-body text-xs text-muted">
+                  AI assistant, may make mistakes
+                </p>
+              </div>
             </div>
 
             <div
               data-lenis-prevent
-              className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]"
+              className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]"
             >
               {messages.length === 0 && (
                 <p className="font-body text-sm text-muted text-center mt-8">
@@ -100,13 +112,28 @@ export default function ChatWidget() {
                   initial={{ opacity: 0, y: 10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className={`font-body text-sm px-3.5 py-2.5 rounded-xl max-w-[85%] ${
-                    msg.role === "user"
-                      ? "bg-accent text-accent-foreground self-end"
-                      : "bg-border/50 self-start"
+                  className={`flex flex-col ${
+                    msg.role === "user" ? "items-end" : "items-start"
                   }`}
                 >
-                  {msg.content}
+                  <div
+                    className={`font-body text-sm px-3.5 py-2.5 rounded-xl max-w-[85%] ${
+                      msg.role === "user"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-border/50"
+                    }`}
+                  >
+                    {msg.role === "assistant" ? (
+                      <div className="prose-chat">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
+                  </div>
+                  <span className="font-body text-[10px] text-muted mt-1 px-1">
+                    {formatTime(msg.timestamp)}
+                  </span>
                 </motion.div>
               ))}
               {isThinking && (
