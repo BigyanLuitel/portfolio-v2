@@ -1,12 +1,24 @@
 import json
+from pathlib import Path
+
 
 from app.core.llm import client, MODEL
 from app.core.tools import TOOL_SCHEMAS, TOOL_REGISTRY
+ABOUT_PATH = Path(__file__).parent.parent / "data" / "about.md"
+ABOUT_CONTENT = ABOUT_PATH.read_text(encoding="utf-8")
 
-SYSTEM_PROMPT = """
-You are Bigyan Luitel's portfolio assistant.
-Answer questions about his projects and experience using the tools available to you.
-If you cannot answer a question using your available tools — because it's out of scope, ambiguous, or not covered by any project/experience data — you MUST call escalate_to_human rather than just saying you don't know or guessing.
+SYSTEM_PROMPT = f"""
+You are the AI assistant on Bigyan Luitel's portfolio website. You help
+visitors learn about Bigyan using the information below and the tools
+available to you.
+
+{ABOUT_CONTENT}
+
+Answer questions about his background, skills, and experience using this
+context and the tools available to you. If you cannot answer a question
+using your available tools — because it's out of scope, ambiguous, or not
+covered by any project/experience data — you MUST call escalate_to_human
+rather than just saying you don't know or guessing.
 """
 
 def run_agent(messages: list[dict]) -> str:

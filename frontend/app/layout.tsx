@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "./components/SmoothScroll";
-
+import ChatWidget from "./components/ChatWidget";
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-heading",
   subsets: ["latin"],
@@ -28,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col font-body">
         <SmoothScroll>{children}</SmoothScroll>
+        <ChatWidget />
       </body>
     </html>
   );

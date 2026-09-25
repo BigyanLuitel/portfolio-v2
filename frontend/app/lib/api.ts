@@ -32,3 +32,24 @@ const GRADIENTS = [
 export function getProjectGradient(index: number): string {
   return GRADIENTS[index % GRADIENTS.length];
 }
+export interface ChatResponse {
+  reply: string;
+  session_id: string;
+}
+
+export async function sendChatMessage(
+  message: string,
+  sessionId: string | null
+): Promise<ChatResponse> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, session_id: sessionId }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Chat request failed: ${res.status}`);
+  }
+
+  return res.json();
+}
