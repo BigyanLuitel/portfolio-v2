@@ -19,6 +19,8 @@ const SUGGESTIONS = [
   "Tell me about his experience",
 ];
 
+const TEXTAREA_MAX_HEIGHT = 120;
+
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -51,8 +53,6 @@ export default function ChatWidget() {
   useEffect(() => {
     if (wasNearBottomRef.current) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else if (isOpen) {
-      // New message arrived while user was scrolled up — don't force-scroll.
     }
   }, [messages, isThinking, isOpen]);
 
@@ -113,12 +113,17 @@ export default function ChatWidget() {
     }
   }, [isOpen]);
 
-  // Auto-grow the textarea up to a max height.
+  // Auto-grow the textarea up to a max height, only showing a scrollbar
+  // once content actually exceeds that max (prevents the native step-arrow
+  // scrollbar from appearing on single-line input).
   const autoResize = () => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    const next = Math.min(el.scrollHeight, TEXTAREA_MAX_HEIGHT);
+    el.style.height = `${next}px`;
+    el.style.overflowY =
+      el.scrollHeight > TEXTAREA_MAX_HEIGHT ? "auto" : "hidden";
   };
 
   useEffect(() => {
@@ -344,7 +349,7 @@ export default function ChatWidget() {
                 placeholder="Type a message..."
                 rows={1}
                 aria-label="Type your message"
-                className="flex-1 text-[16px] leading-normal bg-transparent border rounded-lg resize-none font-body border-border px-3 py-2 focus:outline-none focus:border-accent transition-colors max-h-[120px]"
+                className="flex-1 text-[16px] leading-normal bg-transparent border rounded-lg resize-none font-body border-border px-3 py-2 focus:outline-none focus:border-accent transition-colors max-h-[120px] overflow-hidden"
               />
               <button
                 onClick={handleSend}
