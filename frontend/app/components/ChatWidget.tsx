@@ -70,7 +70,11 @@ export default function ChatWidget() {
         onClick={() => setIsOpen((open) => !open)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-lg"
+        className="fixed z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg bg-accent text-accent-foreground"
+        style={{
+          bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
+          right: "calc(1.5rem + env(safe-area-inset-right, 0px))",
+        }}
         aria-label="Toggle chat"
       >
         {isOpen ? <FiX size={22} /> : <FiMessageCircle size={22} />}
@@ -83,15 +87,20 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-80 sm:w-96 h-[28rem] bg-background border border-border rounded-2xl shadow-xl flex flex-col overflow-hidden"
+            className="fixed z-50 flex flex-col overflow-hidden border shadow-xl left-4 right-4 sm:left-auto sm:right-6 sm:w-96 bg-background border-border rounded-2xl"
+            style={{
+              bottom: "calc(6rem + env(safe-area-inset-bottom, 0px))",
+              height: "min(28rem, 70vh)",
+              maxWidth: "calc(100vw - 2rem)",
+            }}
           >
-            <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
+            <div className="flex items-center px-4 py-3 border-b border-border gap-2.5">
               <div className="w-2 h-2 rounded-full bg-green-500" />
               <div>
-                <p className="font-heading font-medium text-sm">
+                <p className="text-sm font-medium font-heading">
                   Ask about Bigyan
                 </p>
-                <p className="font-body text-xs text-muted">
+                <p className="text-xs font-body text-muted">
                   AI assistant, may make mistakes
                 </p>
               </div>
@@ -99,10 +108,10 @@ export default function ChatWidget() {
 
             <div
               data-lenis-prevent
-              className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]"
+              className="flex flex-col flex-1 gap-4 px-4 py-3 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]"
             >
               {messages.length === 0 && (
-                <p className="font-body text-sm text-muted text-center mt-8">
+                <p className="mt-8 text-sm text-center font-body text-muted">
                   Ask me about Bigyan&apos;s projects, skills, or experience.
                 </p>
               )}
@@ -131,7 +140,7 @@ export default function ChatWidget() {
                       msg.content
                     )}
                   </div>
-                  <span className="font-body text-[10px] text-muted mt-1 px-1">
+                  <span className="text-[10px] font-body text-muted mt-1 px-1">
                     {formatTime(msg.timestamp)}
                   </span>
                 </motion.div>
@@ -141,7 +150,7 @@ export default function ChatWidget() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="flex gap-1 px-3.5 py-2.5 rounded-xl bg-border/50 self-start w-fit"
+                  className="flex gap-1 self-start px-3.5 py-2.5 rounded-xl bg-border/50 w-fit"
                 >
                   {[0, 1, 2].map((i) => (
                     <motion.span
@@ -161,20 +170,20 @@ export default function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-3 border-t border-border flex gap-2">
+            <div className="flex gap-2 p-3 border-t border-border">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Type a message..."
-                className="flex-1 font-body text-sm bg-transparent border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent transition-colors"
+                className="flex-1 px-3 py-2 text-sm bg-transparent border rounded-lg font-body border-border focus:outline-none focus:border-accent transition-colors"
               />
               <button
                 onClick={handleSend}
                 disabled={isThinking}
                 aria-label="Send message"
-                className="w-9 h-9 rounded-lg bg-accent text-accent-foreground flex items-center justify-center disabled:opacity-50 flex-shrink-0"
+                className="flex items-center justify-center flex-shrink-0 rounded-lg w-9 h-9 bg-accent text-accent-foreground disabled:opacity-50"
               >
                 <FiSend size={16} />
               </button>
