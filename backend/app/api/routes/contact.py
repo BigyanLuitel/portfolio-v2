@@ -1,21 +1,18 @@
-from fastapi import APIRouter
-from app.schemas.contact import ContactRequest, ContactResponse
-from app.models.contact_store import SUBMISSIONS
+from fastapi import APIRouter, Request
+
+from app.core.limiter import limiter
 from app.core.tools import _send_telegram_message
-router = APIRouter(prefix="/contact", tags=["Contact"])
+from app.models.contact_store import SUBMISSIONS
+from app.schemas.contact import ContactRequest, ContactResponse
+
+router = APIRouter(prefix="/contact", tags=["contact"])
+
 
 @router.post("/", response_model=ContactResponse)
-def submit_contact(payload: ContactRequest):
+@limiter.limit("5/minute")
+def submit_contact(request: Request, payload: ContactRequest):
     SUBMISSIONS.append(payload)
     _send_telegram_message(
         f"[Contact Form] {payload.name} <{payload.email}>: {payload.message}"
     )
     return ContactResponse(success=True, detail="Message received.")
-@router.post("/", response_model=ContactResponse)
-def submit_contact(payload: ContactRequest):
-    """
-    Submit a contact form request.
-    """
-    SUBMISSIONS.append(payload)
-    print(f"New contact submission: {payload}")
-    return ContactResponse(success=True, detail="Contact form submitted successfully.")
