@@ -40,13 +40,14 @@ export default function About() {
             Hi, I&apos;m Bigyan Luitel
           </h2>
           <p className="font-body text-base md:text-lg text-muted leading-relaxed mb-6">
-            I&apos;m a BSc.CS student in Kathmandu, Nepal, working toward a
-            career as an AI Engineer. My focus is on backend systems and applied
-            AI — RAG pipelines, agentic tool-calling systems, and the kind of
-            practical infrastructure that makes AI features actually usable in
-            production, not just in a notebook. I&apos;m especially interested
-            in building for Nepal&apos;s SMEs and education sector, where
-            there&apos;s real, underserved demand for this kind of work.
+            I’m a BSc. CSIT student in Kathmandu, Nepal, building my path toward
+            becoming an AI Engineer. I enjoy working at the intersection of
+            backend development and applied AI — building RAG systems, agentic
+            tool-calling workflows, and AI-powered applications that solve
+            practical problems. I’m particularly interested in the engineering
+            behind AI systems: how they retrieve information, use tools,
+            interact with APIs, and work reliably beyond a simple notebook or
+            demo.
           </p>
 
           <div className="flex flex-wrap gap-2">
