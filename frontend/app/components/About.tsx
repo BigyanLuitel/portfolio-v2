@@ -51,16 +51,18 @@ export default function About() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {["📍 Kathmandu, Nepal", "🎓 BSc.CS, 2027", "💼 Open to work"].map(
-              (badge) => (
-                <span
-                  key={badge}
-                  className="text-sm px-3 py-1.5 rounded-full border border-border text-muted"
-                >
-                  {badge}
-                </span>
-              ),
-            )}
+            {[
+              "📍 Kathmandu, Nepal",
+              "🎓 BSc.CSIT, 2027",
+              "💼 Open to work",
+            ].map((badge) => (
+              <span
+                key={badge}
+                className="text-sm px-3 py-1.5 rounded-full border border-border text-muted"
+              >
+                {badge}
+              </span>
+            ))}
           </div>
         </motion.div>
       </div>
